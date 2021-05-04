@@ -1,15 +1,17 @@
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 import logging
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from easysettings import EasySettings
+from dotenv import dotenv_values
 
 import esport_matches_api as esapi
 
 games = ["dota2", "csgo"]
 # pandascore.co token
-token = 'TOKEN'
+env_values = dotenv_values(".env")
+token = env_values["PANDASCORE_TOKEN"]
 
 # telegram bot token
-updater = Updater(token='TOKEN')
+updater = Updater(token=env_values["TELEGRAM_BOT_TOKEN"])
 dispatcher = updater.dispatcher
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', filename="info.log",
                     level=logging.INFO)

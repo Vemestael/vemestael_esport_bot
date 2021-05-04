@@ -1,3 +1,4 @@
 python-telegram-bot==13.5
 requests==2.25.1
 easysettings==4.0.0
+python-dotenv==0.17.1
