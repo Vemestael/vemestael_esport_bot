@@ -1,25 +1,23 @@
-import logging
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
-from easysettings import EasySettings
-from dotenv import dotenv_values
+from os import makedirs
+from os.path import exists
 
-import esport_matches_api as esapi
+from dotenv import dotenv_values
+from easysettings import EasySettings
+
+import vemestael_esport_bot.esport_matches_api as esapi
 
 games = ["dota2", "csgo"]
-# pandascore.co token
+
 env_values = dotenv_values(".env")
 token = env_values["PANDASCORE_TOKEN"]
-
-# telegram bot token
-updater = Updater(token=env_values["TELEGRAM_BOT_TOKEN"])
-dispatcher = updater.dispatcher
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', filename="info.log",
-                    level=logging.INFO)
-settings = EasySettings(".conf")
 
 
 def get_matches_info(update, context):
     command = update.message.text.split(' ')[0]
+    
+    if not exists(f"configs/{update.message.chat.id}"):
+        makedirs(f"configs/{update.message.chat.id}")
+    settings = EasySettings(f"configs/{update.message.chat.id}/.conf")
     page_size = int(settings.get('matches_number', 3))
 
     if command == "/past_matches":
@@ -65,6 +63,9 @@ def get_settings(update, context):
 
 
 def get_number_of_matches(update, context):
+    if not exists(f"./configs/{update.message.chat.id}"):
+        makedirs(f"./configs/{update.message.chat.id}")
+    settings = EasySettings(f"./configs/{update.message.chat.id}/.conf")
     matches_number = settings.get('matches_number', 0)
     if matches_number:
         response_text = f"the number of displayed matches: {matches_number}"
@@ -77,6 +78,10 @@ def get_number_of_matches(update, context):
 def set_number_of_matches(update, context):
     try:
         matches_number = context.args[0]
+
+        if not exists(f"configs/{update.message.chat.id}"):
+            makedirs(f"configs/{update.message.chat.id}")
+        settings = EasySettings(f"configs/{update.message.chat.id}/.conf")
         settings.set('matches_number', matches_number)
         settings.save()
         response_text = "the setting was set successfully"
@@ -86,24 +91,3 @@ def set_number_of_matches(update, context):
         response_text = "invalid entered value"
         context.bot.send_message(
             chat_id=update.effective_chat.id, text=response_text)
-
-
-matches_handler = CommandHandler(
-    ['past_matches', 'running_matches', 'upcoming_matches'], get_matches_info)
-dispatcher.add_handler(matches_handler)
-
-settings_handler = CommandHandler(
-    'settings', get_settings)
-dispatcher.add_handler(settings_handler)
-
-get_matches_number_handler = CommandHandler(
-    'get_number_of_matches', get_number_of_matches)
-dispatcher.add_handler(get_matches_number_handler)
-
-set_matches_number_handler = CommandHandler(
-    'set_number_of_matches', set_number_of_matches)
-dispatcher.add_handler(set_matches_number_handler)
-
-updater.start_polling()
-
-updater.idle()
