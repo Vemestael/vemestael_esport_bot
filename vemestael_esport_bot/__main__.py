@@ -13,6 +13,10 @@ matches_handler = CommandHandler(
     ['past_matches', 'running_matches', 'upcoming_matches'], bot.get_matches_info)
 dispatcher.add_handler(matches_handler)
 
+team_matches_handler = CommandHandler(
+    ['team_past_matches', 'team_upcoming_matches'], bot.get_team_matches_info)
+dispatcher.add_handler(team_matches_handler)
+
 settings_handler = CommandHandler(
     'settings', bot.get_settings)
 dispatcher.add_handler(settings_handler)
