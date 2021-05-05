@@ -9,6 +9,7 @@ import vemestael_esport_bot.esport_matches_api as esapi
 games = ["dota2", "csgo"]
 
 env_values = dotenv_values(".env")
+# pandascore.co token
 token = env_values["PANDASCORE_TOKEN"]
 
 
@@ -47,8 +48,30 @@ def get_matches_info(update, context):
         for key in match:
             response_text += str(key) + "\n"
         context.bot.send_message(
-            chat_id=update.effective_chat.id, text=response_text)
+            chat_id=update.effective_chat.id, text=response_text, disable_web_page_preview=True)
 
+def get_team_matches_info(update, context):
+    command = update.message.text.split(' ')[0]
+    
+    if not exists(f"configs/{update.message.chat.id}"):
+        makedirs(f"configs/{update.message.chat.id}")
+    settings = EasySettings(f"configs/{update.message.chat.id}/.conf")
+    page_size = int(settings.get('matches_number', 3))
+
+    if command == "/team_past_matches":
+        get_team_matches = esapi.get_team_past_matches
+    elif command == "/team_upcoming_matches":
+        get_team_matches = esapi.get_team_upcoming_matches
+
+    team = context.args[0].lower()
+    response = get_team_matches(team, token, page_size)
+
+    for match in response:
+        response_text = ""
+        for key in match:
+            response_text += str(key) + "\n"
+        context.bot.send_message(
+            chat_id=update.effective_chat.id, text=response_text, disable_web_page_preview=True)
 
 def get_settings(update, context):
     settings_list = [
