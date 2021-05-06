@@ -15,11 +15,12 @@ token = env_values["PANDASCORE_TOKEN"]
 
 def get_matches_info(update, context):
     command = update.message.text.split(' ')[0]
-    
+
     if not exists(f"configs/{update.message.chat.id}"):
         makedirs(f"configs/{update.message.chat.id}")
     settings = EasySettings(f"configs/{update.message.chat.id}/.conf")
     page_size = int(settings.get('matches_number', 3))
+    days_range = int(settings.get('days_range', 1))
 
     if command == "/past_matches":
         get_matches = esapi.get_past_matches
@@ -37,11 +38,11 @@ def get_matches_info(update, context):
             context.bot.send_message(
                 chat_id=update.effective_chat.id, text="the specified game is not in the list")
             return
-        response = get_matches(game, token, page_size)
+        response = get_matches(game, token, page_size, days_range)
     else:
         response = list()
-        response += get_matches(games[0], token, page_size)
-        response += get_matches(games[1], token, page_size)
+        response += get_matches(games[0], token, page_size, days_range)
+        response += get_matches(games[1], token, page_size, days_range)
 
     for match in response:
         response_text = ""
@@ -50,13 +51,15 @@ def get_matches_info(update, context):
         context.bot.send_message(
             chat_id=update.effective_chat.id, text=response_text, disable_web_page_preview=True)
 
+
 def get_team_matches_info(update, context):
     command = update.message.text.split(' ')[0]
-    
+
     if not exists(f"configs/{update.message.chat.id}"):
         makedirs(f"configs/{update.message.chat.id}")
     settings = EasySettings(f"configs/{update.message.chat.id}/.conf")
     page_size = int(settings.get('matches_number', 3))
+    days_range = int(settings.get('days_range', 1))
 
     if command == "/team_past_matches":
         get_team_matches = esapi.get_team_past_matches
@@ -64,7 +67,7 @@ def get_team_matches_info(update, context):
         get_team_matches = esapi.get_team_upcoming_matches
 
     team = context.args[0].lower()
-    response = get_team_matches(team, token, page_size)
+    response = get_team_matches(team, token, page_size, days_range)
 
     for match in response:
         response_text = ""
@@ -73,10 +76,13 @@ def get_team_matches_info(update, context):
         context.bot.send_message(
             chat_id=update.effective_chat.id, text=response_text, disable_web_page_preview=True)
 
+
 def get_settings(update, context):
     settings_list = [
         "/get_number_of_matches - Get the number of displayed matches",
-        "/set_number_of_matches - Set the number of displayed matches"
+        "/set_number_of_matches - Set the number of displayed matches",
+        "/get_days_range - Get get the range of days to sample"
+        "/set_days_range - Set get the range of days to sample"
     ]
     response_text = str()
     for setting in settings_list:
@@ -106,6 +112,37 @@ def set_number_of_matches(update, context):
             makedirs(f"configs/{update.message.chat.id}")
         settings = EasySettings(f"configs/{update.message.chat.id}/.conf")
         settings.set('matches_number', matches_number)
+        settings.save()
+        response_text = "the setting was set successfully"
+        context.bot.send_message(
+            chat_id=update.effective_chat.id, text=response_text)
+    except:
+        response_text = "invalid entered value"
+        context.bot.send_message(
+            chat_id=update.effective_chat.id, text=response_text)
+
+
+def get_days_range(update, context):
+    if not exists(f"./configs/{update.message.chat.id}"):
+        makedirs(f"./configs/{update.message.chat.id}")
+    settings = EasySettings(f"./configs/{update.message.chat.id}/.conf")
+    days_range = settings.get('days_range', 0)
+    if days_range:
+        response_text = f"the range of days to sample: {days_range}"
+    else:
+        response_text = f"this setting is not set, default value = 1"
+    context.bot.send_message(
+        chat_id=update.effective_chat.id, text=response_text)
+
+
+def set_days_range(update, context):
+    try:
+        days_range = context.args[0]
+
+        if not exists(f"configs/{update.message.chat.id}"):
+            makedirs(f"configs/{update.message.chat.id}")
+        settings = EasySettings(f"configs/{update.message.chat.id}/.conf")
+        settings.set('days_range', matches_number)
         settings.save()
         response_text = "the setting was set successfully"
         context.bot.send_message(
