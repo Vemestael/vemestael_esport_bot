@@ -29,6 +29,14 @@ set_matches_number_handler = CommandHandler(
     'set_number_of_matches', bot.set_number_of_matches)
 dispatcher.add_handler(set_matches_number_handler)
 
+get_days_range_handler = CommandHandler(
+    'get_days_range', bot.get_days_range)
+dispatcher.add_handler(get_days_range_handler)
+
+set_days_range_handler = CommandHandler(
+    'set_days_range', bot.set_days_range)
+dispatcher.add_handler(set_days_range_handler)
+
 
 if __name__ == '__main__':
     updater.start_polling()
