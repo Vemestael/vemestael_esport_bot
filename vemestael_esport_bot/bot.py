@@ -14,9 +14,10 @@ token = env_values["PANDASCORE_TOKEN"]
 
 def start(update, context):
     start_text = """Hi! This bot provides information on eSports matches.\n
-    Information is currently available on two games: Dota 2 and CS:GO.\n
-    By default, the bot displays information for two games at once.\n
-    If you want to get data on a particular game, add its name after the command, as /command game_name.
+Information is currently available on two games: Dota 2 and CS:GO.\n
+By default, the bot displays information for two games at once.\n
+If you want to get data on a particular game, add its name after the command, as /command game_name.\n
+To get match information for a team, add the team name after the command, as /command team_name.\n
     """
     context.bot.send_message(chat_id=update.effective_chat.id, text=start_text)
 
@@ -73,6 +74,8 @@ def get_team_matches_info(update, context):
     elif command == "/team_upcoming_matches":
         get_team_matches = esapi.get_team_upcoming_matches
 
+    if not len(context.args):
+        context.bot.send_message(chat_id=update.effective_chat.id, text="Please specify the team name")
     team = context.args[0].lower()
     response = get_team_matches(team, token, page_size, days_range)
 
