@@ -9,6 +9,10 @@ dispatcher = updater.dispatcher
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', filename="info.log",
                     level=logging.INFO)
 
+start_handler = CommandHandler(
+    'start', bot.start)
+dispatcher.add_handler(start_handler)
+
 matches_handler = CommandHandler(
     ['past_matches', 'running_matches', 'upcoming_matches'], bot.get_matches_info)
 dispatcher.add_handler(matches_handler)

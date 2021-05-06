@@ -12,6 +12,13 @@ env_values = dotenv_values(".env")
 # pandascore.co token
 token = env_values["PANDASCORE_TOKEN"]
 
+def start(update, context):
+    start_text = """Hi! This bot provides information on eSports matches.\n
+    Information is currently available on two games: Dota 2 and CS:GO.\n
+    By default, the bot displays information for two games at once.\n
+    If you want to get data on a particular game, add its name after the command, as /command game_name.
+    """
+    context.bot.send_message(chat_id=update.effective_chat.id, text=start_text)
 
 def get_matches_info(update, context):
     command = update.message.text.split(' ')[0]
