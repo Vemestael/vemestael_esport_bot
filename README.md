@@ -53,12 +53,13 @@ $ copy .env.example .env
 - `TELEGRAM_BOT_TOKEN` - Get it by contacting to [BotFather](https://t.me/botfather) ([guilde](https://core.telegram.org/bots#6-botfather))
 
 ## Usage
+Run the bot
 ```
 python -m vemestael_esport_bot
 ```
+In bot chat use the commands [above](#configuration), as /command
 
 ## License
-
 This project is licensed under the [MIT License](LICENSE).
 
 ## Thanks
