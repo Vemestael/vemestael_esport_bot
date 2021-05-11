@@ -91,7 +91,7 @@ def get_settings(update, context):
     settings_list = [
         "/get_number_of_matches - Get the number of displayed matches",
         "/set_number_of_matches - Set the number of displayed matches",
-        "/get_days_range - Get get the range of days to sample"
+        "/get_days_range - Get get the range of days to sample",
         "/set_days_range - Set get the range of days to sample"
     ]
     response_text = str()
