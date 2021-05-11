@@ -152,7 +152,7 @@ def set_days_range(update, context):
         if not exists(f"configs/{update.message.chat.id}"):
             makedirs(f"configs/{update.message.chat.id}")
         settings = EasySettings(f"configs/{update.message.chat.id}/.conf")
-        settings.set('days_range', matches_number)
+        settings.set('days_range', days_range)
         settings.save()
         response_text = "the setting was set successfully"
         context.bot.send_message(
